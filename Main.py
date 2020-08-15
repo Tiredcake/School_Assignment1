@@ -1,11 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
+import sqlite3
 
 
 class DiceThrower:
     def __init__(self):
+        # Setting up connection to local database
+        self.c = sqlite3.connect('Database.db')
+        self.cursor = self.c.cursor()
         # Importing data from text
-        self.listclass = []
+        """self.listclass = []
         with open('ClassList.txt') as f:
             for x in f.readlines():
                 self.listclass.append(x.strip())
@@ -20,7 +24,7 @@ class DiceThrower:
                 self.registration[x] = 'unregistered'
             else:
                 self.registration[x] = 'registered'
-
+"""
         # Starting Application and making it cover whole screen
         Screen = tk.Tk()
         Screen.title('Main Screen')
@@ -31,19 +35,19 @@ class DiceThrower:
         Title.configure(background='grey')
         Title.place(relx=0.3, rely=0.1)
         # Button to go to login page
-        Start = tk.Button(Screen, text='Start', font=('Courier', 30, 'italic'), command=self.login)
+        Start = tk.Button(Screen, text='Start', font=('Courier', 30, 'italic'),borderwidth=0, command=self.login)
         Start.configure(bg='white', fg='black', activebackground='black', activeforeground='white')
         Start.place(relx=0.43, rely=0.3, width=200)
         # Button to open the page
         Rules = tk.Button(Screen, text='Rules', font=('Courier', 30, 'italic'), command=self.game_rule)
-        Rules.configure(bg='white', fg='black', activebackground='black', activeforeground='white')
+        Rules.configure(bg='white', fg='black', activebackground='black',borderwidth=0, activeforeground='white')
         Rules.place(relx=0.43, rely=0.40, width=200)
         # Button to check all possible player and to see who has a password
         Player = tk.Button(Screen, text='Players', font=('Courier', 30, 'italic'), command=self.player_screen)
-        Player.configure(bg='white', fg='black', activebackground='black', activeforeground='white')
+        Player.configure(bg='white', fg='black', activebackground='black', borderwidth=0,activeforeground='white')
         Player.place(relx=0.43, rely=0.50, width=200)
         # Button to quit Application
-        Quit = tk.Button(Screen, text='Quit', font=('Courier', 30, 'italic'), command=Screen.destroy)
+        Quit = tk.Button(Screen, text='Quit', font=('Courier', 30, 'italic'),borderwidth=0, command=Screen.destroy)
         Quit.place(relx=0.43, rely=0.60, width=200)
 
         Screen.mainloop()
@@ -128,11 +132,9 @@ class DiceThrower:
         # Position of the Table
         Data.place(relx=0.32, rely=0.3)
 
-        # Inserting the data from text files into the table
-        id = 1
-        for x in self.registration:
-            Data.insert('', id, text=id, values=(x, self.registration[x]))
-            id += 1
+        for x in self.cursor.execute("SELECT * FROM player"):
+
+            Data.insert('', x[0], text=x[0], values=(x[1], x[2]))
 
     def login(self):
         # Log in Screen for authentication
@@ -180,10 +182,16 @@ class DiceThrower:
         player2_pass.pack(ipadx=50, ipady=20)
 
         # Begin Button
-        Button = tk.Button(Framer3, text='Start', font=('System', 30), command=self.start,borderwidth=0, fg='white', bg='black',
+        Button = tk.Button(Framer3, text='Start', font=('System', 30), command=self.start, borderwidth=0, fg='white',
+                           bg='black',
                            activeforeground='white', activebackground='black')
         Button.pack(pady=(10, 20))
+        #Sign in Button
+        SignIn = tk.Button(Framer3, text="Sign in", font=('System', 30), command=self.signing, borderwidth=0, fg='white',
+                           bg='black',
+                           activeforeground='white', activebackground='black')
 
+        SignIn.pack(pady=(10,20))
         # Quit Button
         Quit = tk.Button(Framer3, text='Quit', font=('System', 30), command=logging.destroy, borderwidth=0, fg='white',
                          bg='black', activeforeground='white', activebackground='black')
@@ -191,5 +199,9 @@ class DiceThrower:
 
     def start(self):
         print('Stupid')
+
+    def signing(self):
+        print("Working")
+
 
 Application = DiceThrower()
