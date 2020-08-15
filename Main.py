@@ -4,13 +4,13 @@ ClassList = []
 
 ClassPassword = {}
 
-with open('sauce.txt') as f:
+with open('ClassList.txt') as f:
     for x in f.readlines():
         ClassList.append(x.strip())
 
 
 
-with open('Data_Loginner.txt') as f:
+with open('Data_Login.txt') as f:
     for x in f.readlines():
         a = x.split(',')
         ClassPassword[a[0]] = a[1].strip()
