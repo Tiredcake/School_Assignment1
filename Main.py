@@ -201,7 +201,56 @@ class DiceThrower:
         print('Stupid')
 
     def signing(self):
-        print("Working")
+        #Sign up frame and some configuration
+        signup = tk.Toplevel()
+        signup.geometry('800x500')
+        signup.configure(background='black')
+        signup.grab_set()
+        signup.title('Signup')
+        signup.resizable(False,False)
 
+
+        Frame = tk.Frame(signup, bg='black')
+        Frame.place(relx=0.3,rely=0.2)
+
+        userlabel = tk.Label(Frame, text="Who are you? (Limit 30)", bg='black', fg='white', font=("System", 20))
+        userlabel.pack()
+
+        userentry = tk.Entry(Frame,font=('System', 25))
+        userentry.pack(pady=20)
+
+        passlabel = tk.Label(Frame, text="Write your password (Limit 30)", bg='black', fg='white', font=("System", 20))
+        passlabel.pack()
+        passentry = tk.Entry(Frame,font=('System', 25), show="*")
+        passentry.pack(pady=(20,0))
+
+        #Signup button
+        commit = tk.Button(Frame, text="Sign up", borderwidth=0, fg='white',
+                         bg='black', activeforeground='white', activebackground='black',font=('System', 30), command=lambda : self.check(userentry.get(), passentry.get()))
+        commit.pack(pady=(20,0))
+    def check(self,username,password):
+        if username == '' or password == '':
+            Error = tk.Toplevel()
+            Error.grab_set()
+            tk.Label(Error, text="USERNAME AND/OR PASSWORD CAN'T BE EMPTY", fg='white', bg='black', font=('Arial', 50)).pack(fill=tk.BOTH)
+            Error.after(2000, lambda : Error.destroy())
+        else:
+            nameList = []
+            for x in self.cursor.execute(f"SELECT * FROM player"):
+                nameList.append(x[1])
+            if username not in nameList:
+                Error = tk.Toplevel()
+                Error.grab_set()
+                tk.Label(Error, text="USERNAME IS NOT IN CURRENT DATABASE", fg='white', bg='black',
+                         font=('Arial', 50)).pack(fill=tk.BOTH)
+                Error.after(2000, lambda: Error.destroy())
+            else:
+                if len(password) > 30:
+                    Error = tk.Toplevel()
+                    Error.grab_set()
+                    tk.Label(Error, text="PASSWORD IS TOO LONG", fg='white', bg='black',
+                             font=('Arial', 50)).pack(fill=tk.BOTH)
+                    Error.after(2000, lambda: Error.destroy())
+                else:
 
 Application = DiceThrower()
