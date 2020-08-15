@@ -142,10 +142,18 @@ class DiceThrower:
         logging.title('Log in ')
         logging.grab_set()
 
-        # Frame to encapsulate the log in section
+        # Frame to encapsulate the first player logins
         Framer = tk.Frame(logging)
         Framer.configure(background='black')
-        Framer.place(relx=0.39, rely=0.1)
+        Framer.place(relx=0.10, rely=0.05)
+        # Second Frame to encapsulate the second player logins
+        Framer2 = tk.Frame(logging)
+        Framer2.configure(background='black')
+        Framer2.place(relx=0.70, rely=0.05)
+        # Third Frame for Start and Quit button
+        Framer3 = tk.Frame(logging)
+        Framer3.configure(background='black')
+        Framer3.place(relx=0.45, rely=0.6)
         # Player 1 login
         player1 = tk.Label(Framer, text='Player 1', font=('System', 20), bg='black', fg='white')
         player1.pack()
@@ -160,12 +168,28 @@ class DiceThrower:
         player1_pass.pack(ipadx=50, ipady=20, pady=(10, 50))
 
         # Player 2 login
-        player2 = tk.Label(Framer, text='Player 2', font=('System', 20), bg='black', fg='white')
+        player2 = tk.Label(Framer2, text='Player 2', font=('System', 20), bg='black', fg='white')
         player2.pack()
-        player2_name = tk.Entry(Framer, font=("Times New Roman", 20), show="*")
-        player2_name.pack(ipadx=50, ipady=20, pady=50)
-
-        player2_pass = tk.Entry(Framer, font=("Times New Roman", 20))
+        user2 = tk.Label(Framer2, text='Username', font=('System', 20), bg='black', fg='white')
+        user2.pack(pady=(20, 0))
+        player2_name = tk.Entry(Framer2, font=("Times New Roman", 20), show="*")
+        player2_name.pack(ipadx=50, ipady=20, pady=(10, 30))
+        pass2 = tk.Label(Framer2, text='Password', font=('System', 20), bg='black', fg='white')
+        pass2.pack(pady=(0, 0))
+        player2_pass = tk.Entry(Framer2, font=("Times New Roman", 20))
         player2_pass.pack(ipadx=50, ipady=20)
+
+        # Begin Button
+        Button = tk.Button(Framer3, text='Start', font=('System', 30), command=self.start,borderwidth=0, fg='white', bg='black',
+                           activeforeground='white', activebackground='black')
+        Button.pack(pady=(10, 20))
+
+        # Quit Button
+        Quit = tk.Button(Framer3, text='Quit', font=('System', 30), command=logging.destroy, borderwidth=0, fg='white',
+                         bg='black', activeforeground='white', activebackground='black')
+        Quit.pack()
+
+    def start(self):
+        print('Stupid')
 
 Application = DiceThrower()
