@@ -2,17 +2,18 @@ import tkinter as tk
 from tkinter import ttk
 import sqlite3
 import random as rand
+import PIL
 
 class DiceThrower:
     def __init__(self):
         # Setting up connection to local database
         self.c = sqlite3.connect('Database.db')
         self.cursor = self.c.cursor()
-        #Ready the list of name that can be used in the game
+        # Ready the list of name that can be used in the game
         self.nameList = []
         for x in self.cursor.execute(f"SELECT * FROM player"):
             self.nameList.append(x[1])
-        print(self.nameList)
+
         # Starting Application and making it cover whole screen
         Screen = tk.Tk()
         Screen.attributes('-fullscreen', True)
@@ -172,8 +173,9 @@ class DiceThrower:
         player2_pass.pack(ipadx=50, ipady=20)
 
         # Begin Button
-        Button = tk.Button(Framer3, text='Start', font=('System', 30),  borderwidth=0, fg='white',
-                           bg='black', command=lambda : self.authentication(player1_name.get(),player1_pass.get(),player2_name.get(),player2_pass.get()),
+        Button = tk.Button(Framer3, text='Start', font=('System', 30), borderwidth=0, fg='white',
+                           bg='black', command=lambda: self.authentication(player1_name.get(), player1_pass.get(),
+                                                                           player2_name.get(), player2_pass.get()),
                            activeforeground='white', activebackground='black')
         Button.pack(pady=(10, 20))
         # Sign in Button
@@ -184,10 +186,10 @@ class DiceThrower:
 
         SignIn.pack(pady=(10, 20))
         # Quit Button
-        Quit = tk.Button(Framer3, text='Quit', font=('System', 30), command=self.logging.destroy, borderwidth=0, fg='white',
+        Quit = tk.Button(Framer3, text='Quit', font=('System', 30), command=self.logging.destroy, borderwidth=0,
+                         fg='white',
                          bg='black', activeforeground='white', activebackground='black')
         Quit.pack()
-
 
     def signing(self):
         # Sign up frame and some configuration
@@ -257,14 +259,14 @@ class DiceThrower:
                         Buttons_frame = tk.Frame(Important)
                         Buttons_frame.pack(fill=tk.BOTH)
                         tk.Button(Buttons_frame, text="Continue", fg='white', bg='black', font=('Arial', 50),
-                                  command=lambda: [self.insert_data(username, password), Important.destroy(), self.signup.destroy()]).pack(fill=tk.BOTH, side=tk.LEFT,
-                                                                                             expand=True)
+                                  command=lambda: [self.insert_data(username, password), Important.destroy(),
+                                                   self.signup.destroy()]).pack(fill=tk.BOTH, side=tk.LEFT,
+                                                                                expand=True)
                         tk.Button(Buttons_frame, text="No", fg='white', bg='black', font=('Arial', 50),
                                   command=Important.destroy).pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
                     else:
                         self.insert_data(username, password)
                         self.signup.destroy()
-
 
     def insert_data(self, user, passw):
         self.cursor.execute(f"UPDATE player SET password='{passw}', registered='Y' WHERE name='{user}'")
@@ -275,10 +277,10 @@ class DiceThrower:
         Pop.resizable(False, False)
         Pop.geometry('1040x100')
 
-        tk.Label(Pop, text="Your password has been set", fg='white',bg='black', font=('System', 40)).pack(fill=tk.BOTH)
-        Pop.after(2000, lambda : Pop.destroy())
+        tk.Label(Pop, text="Your password has been set", fg='white', bg='black', font=('System', 40)).pack(fill=tk.BOTH)
+        Pop.after(2000, lambda: Pop.destroy())
 
-    def authentication(self,u1,p1,u2,p2):
+    def authentication(self, u1, p1, u2, p2):
         if u1 not in self.nameList or u2 not in self.nameList or p1 == '' or p2 == '':
             Error = tk.Toplevel()
             Error.grab_set()
@@ -289,9 +291,9 @@ class DiceThrower:
             u1_pass = self.cursor.execute(f"SELECT * FROM player WHERE name='{u1}'").fetchone()[3]
             u2_pass = self.cursor.execute(f"SELECT * FROM player WHERE name='{u2}'").fetchone()[3]
             if u1_pass == p1 and u2_pass == p2:
-                print("GOOD JOB, Password is correct")
+
                 self.logging.destroy()
-                self.game()
+                self.game(u1,u2)
             else:
                 Error = tk.Toplevel()
                 Error.grab_set()
@@ -299,14 +301,20 @@ class DiceThrower:
                          font=('Arial', 30)).pack(fill=tk.BOTH)
                 Error.after(2000, lambda: Error.destroy())
 
-    def game(self):
+    def game(self,p1,p2):
         game_screen = tk.Toplevel()
         game_screen.configure(background='black')
         game_screen.grab_set()
-        title = ["Why must I suffer?", "Has the Gambling God foresaken us?", "Must we continue this gambling advertising"]
-
-        game_screen.title(title[rand.randrange(0,len(title))])
+        title = ["Why must I suffer?", "Has the Gambling God foresaken us?",
+                 "Must we continue this gambling advertising?", "Does the application knows of its actions?",
+                 "When will someone find this?"]
+        game_screen.title(title[rand.randrange(0, len(title))])
         game_screen.attributes('-fullscreen', True)
 
-
+        Player1 = tk.Label(game_screen, text=p1, bg='black', fg='white', font=('System', 30))
+        Player1.place(relx=0.2, rely=0.1)
+        Player2 = tk.Label(game_screen, text=p2, bg='black', fg='white', font=('System', 30))
+        Player2.place(relx=0.6, rely=0.1)
+        img = [PIL.ImageTk.PhotoImage(PIL.Image.open("1.jpg")), PIL.ImageTk.PhotoImage(PIL.Image.open("2.jpg")),
+               PIL.ImageTk.PhotoImage(PIL.Image.open("3.jpg")), PIL.ImageTk.PhotoImage(PIL.Image.open("4.jpg"))]
 Application = DiceThrower()
