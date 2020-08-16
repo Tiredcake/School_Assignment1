@@ -1,4 +1,5 @@
-import sqlite3
+import string
+"""import sqlite3
 conn = sqlite3.connect('Database.db')
 # Importing data from text
 listclass = []
@@ -25,4 +26,6 @@ c.execute('Update Player Set registered = "N" WHERE name="Syed Noor"')
 
 conn.commit()
 for x in c:
-    print(x)
+    print(x)"""
+
+print(string.ascii_letters, string.digits, string.punctuation)
