@@ -1,16 +1,9 @@
-from tkinter import *
-from PIL import ImageTk,Image
-import random as rand
-import time
-dictionary = {'player1':0, 'player2':0}
-a = dictionary.keys['player1']
-b = dictionary.keys['player2']
-print(type(a))
-print(type(b))
+import sqlite3
 
-if a == 1 and b == 1:
-    print("True")
 
+conn = sqlite3.connect('Leaderboard.db')
+leadercursor = conn.cursor()
+leadercursor.execute("CREATE TABLE leaderboard (name VARCHAR(30), score INT)")
 
 """import sqlite3
 conn = sqlite3.connect('Database.db')

@@ -6,11 +6,14 @@ from PIL import ImageTk, Image
 from numpy import random
 import tkinter.font as TkFont
 
+
 class DiceThrower:
     def __init__(self):
         # Setting up connection to local database
         self.c = sqlite3.connect('Database.db')
         self.cursor = self.c.cursor()
+        self.leaderboard = sqlite3.connect('Leaderboard.db')
+        self.leadercursor = self.leaderboard.cursor()
         # Ready the list of name that can be used in the game
         self.nameList = []
         for x in self.cursor.execute(f"SELECT * FROM player"):
@@ -29,18 +32,21 @@ class DiceThrower:
         # Button to go to login page
         Start = tk.Button(Screen, text='Start', font=('Courier', 30, 'italic'), borderwidth=0, command=self.login)
         Start.configure(bg='white', fg='black', activebackground='black', activeforeground='white')
-        Start.place(relx=0.43, rely=0.3, width=200)
+        Start.place(relx=0.43, rely=0.3, width=280)
         # Button to open the page
         Rules = tk.Button(Screen, text='Rules', font=('Courier', 30, 'italic'), command=self.game_rule)
         Rules.configure(bg='white', fg='black', activebackground='black', borderwidth=0, activeforeground='white')
-        Rules.place(relx=0.43, rely=0.40, width=200)
+        Rules.place(relx=0.43, rely=0.40, width=280)
         # Button to check all possible player and to see who has a password
         Player = tk.Button(Screen, text='Players', font=('Courier', 30, 'italic'), command=self.player_screen)
         Player.configure(bg='white', fg='black', activebackground='black', borderwidth=0, activeforeground='white')
-        Player.place(relx=0.43, rely=0.50, width=200)
+        Player.place(relx=0.43, rely=0.50, width=280)
+        # Button to open leaderboard
+        Leaderboard = tk.Button(Screen, text='Leaderboard', font=('Courier', 30, 'italic'), command=self.board)
+        Leaderboard.place(relx=0.43, rely=0.60, width=280)
         # Button to quit Application
         Quit = tk.Button(Screen, text='Quit', font=('Courier', 30, 'italic'), borderwidth=0, command=Screen.destroy)
-        Quit.place(relx=0.43, rely=0.60, width=200)
+        Quit.place(relx=0.43, rely=0.70, width=280)
 
         Screen.mainloop()
 
@@ -137,7 +143,7 @@ class DiceThrower:
         self.logging.title('Log in ')
         self.logging.grab_set()
 
-        bigfont = TkFont.Font(family='System', size = 10)
+        bigfont = TkFont.Font(family='System', size=10)
         self.logging.option_add("*TCombobox*Listbox*Font", bigfont)
         # Frame to encapsulate the first player logins
         Framer = tk.Frame(self.logging)
@@ -291,6 +297,12 @@ class DiceThrower:
             tk.Label(Error, text="Your Log In are Faulty! Correct it!", fg='white', bg='black',
                      font=('Arial', 30)).pack(fill=tk.BOTH)
             Error.after(2000, lambda: Error.destroy())
+        elif u1 == u2:
+            Error = tk.Toplevel()
+            Error.grab_set()
+            tk.Label(Error, text="Don't try to be smart about this", fg='red', bg='black',
+                     font=('Arial', 30)).pack(fill=tk.BOTH)
+            Error.after(2000, lambda: Error.destroy())
         elif u1 in self.nameList and u2 in self.nameList:
             u1_pass = self.cursor.execute(f"SELECT * FROM player WHERE name='{u1}'").fetchone()[3]
             u2_pass = self.cursor.execute(f"SELECT * FROM player WHERE name='{u2}'").fetchone()[3]
@@ -324,26 +336,28 @@ class DiceThrower:
         image = tk.Label(self.game_screen, image=img[0])
         image.photo = img[0]
         image.pack()"""
-        self.Score = {p1: [1,0], p2: [1,0]}
+        self.Score = {p1: [1, 0], p2: [1, 0]}
         Begin = tk.Button(self.game_screen, text=f"Click to begin {p1}'s game", borderwidth=0, bg='black', fg='white',
-                          font=('System', 20), activebackground='black', activeforeground='white', command= lambda : [self.dicey(p1,0.2, 0.3, self.Score[p1][0]), self.end(p1,p2)])
+                          font=('System', 20), activebackground='black', activeforeground='white',
+                          command=lambda: [self.dicey(p1, 0.2, 0.3, self.Score[p1][0]), self.end(p1, p2)])
         Begin.place(relx=0.15, rely=0.68)
 
-
-
         Begin2 = tk.Button(self.game_screen, text=f"Click to begin {p2}'s game", borderwidth=0, bg='black', fg='white',
-                           font=('System', 20), activebackground='black', activeforeground='white', command= lambda : [self.dicey(p2,0.6,0.3, self.Score[p2][0]), self.end(p1,p2)])
+                           font=('System', 20), activebackground='black', activeforeground='white',
+                           command=lambda: [self.dicey(p2, 0.6, 0.3, self.Score[p2][0]), self.end(p1, p2)])
         Begin2.place(relx=0.55, rely=0.68)
-        self.End = {p1: 0, p2:0}
+        self.End = {p1: 0, p2: 0}
 
-    def dicey(self,player, x,y, count):
+    def dicey(self, player, x, y, count):
         if count > 5:
-            tk.Label(self.game_screen, text=f"{player} have reached limit", bg='black', fg='white', font=('System', 20)).place(relx=x,rely=y+0.2)
+            tk.Label(self.game_screen, text=f"{player} have reached limit", bg='black', fg='white',
+                     font=('System', 20)).place(relx=x, rely=y + 0.2)
         elif player == 'Patrick Nguyen':
             img = [ImageTk.PhotoImage(Image.open("1.png")), ImageTk.PhotoImage(Image.open("2.png")),
                    ImageTk.PhotoImage(Image.open("3.png")), ImageTk.PhotoImage(Image.open("4.png"))]
             number = rand.randrange(0, len(img))
-            roll = (str(random.choice([1,2,3,4,5,6], p= [0.05,0.05,0.05,0.05,0.05,0.75])), str(random.choice([1,2,3,4,5,6], p= [0.05,0.05,0.05,0.05,0.05,0.75])))
+            roll = (str(random.choice([1, 2, 3, 4, 5, 6], p=[0.05, 0.05, 0.05, 0.05, 0.05, 0.75])),
+                    str(random.choice([1, 2, 3, 4, 5, 6], p=[0.05, 0.05, 0.05, 0.05, 0.05, 0.75])))
             for i in roll:
                 self.Score[player][1] += int(i)
             Total = tk.Label(self.game_screen, text=f"Total: {self.Score[player][1]}", bg='black', fg='white',
@@ -366,37 +380,39 @@ class DiceThrower:
             img = [ImageTk.PhotoImage(Image.open("1.png")), ImageTk.PhotoImage(Image.open("2.png")),
                    ImageTk.PhotoImage(Image.open("3.png")), ImageTk.PhotoImage(Image.open("4.png"))]
             number = rand.randrange(0, len(img))
-            roll = (str(rand.randrange(1,6)),str(rand.randrange(1,6)))
+            roll = (str(rand.randrange(1, 6)), str(rand.randrange(1, 6)))
             for i in roll:
                 self.Score[player][1] += int(i)
-            Total = tk.Label(self.game_screen,text=f"Total: {self.Score[player][1]}", bg='black', fg='white', font=('System', 20))
-            Total.place(relx=x, rely= y+0.3)
+            Total = tk.Label(self.game_screen, text=f"Total: {self.Score[player][1]}", bg='black', fg='white',
+                             font=('System', 20))
+            Total.place(relx=x, rely=y + 0.3)
             Rolls = tk.Label(self.game_screen, text=','.join(roll), bg='black', fg='white', font=('System', 30))
-            Rolls.place(relx=x, rely=y-0.1)
-            image = tk.Label(self.game_screen, image = img[number])
+            Rolls.place(relx=x, rely=y - 0.1)
+            image = tk.Label(self.game_screen, image=img[number])
             image.photo = img[number]
-            image.place(relx=x,rely=y)
+            image.place(relx=x, rely=y)
 
-            Round = tk.Label(self.game_screen, text=f"Round {self.Score[player][0]}", bg='black', fg='white', font=('System', 20))
-            Round.place(relx=x,rely=y+0.2)
+            Round = tk.Label(self.game_screen, text=f"Round {self.Score[player][0]}", bg='black', fg='white',
+                             font=('System', 20))
+            Round.place(relx=x, rely=y + 0.2)
             if self.Score[player][0] == 5:
                 self.End[player] = 1
             self.Score[player][0] += 1
 
-
-    def end(self,p1,p2):
+    def end(self, p1, p2):
         a = self.End.get(p1)
         b = self.End.get(p2)
 
         if a == 1 and b == 1:
             if self.Score[p1][1] > self.Score[p2][1]:
                 Winner = tk.Toplevel()
-                Winner.resizable(False,False)
+                Winner.resizable(False, False)
                 Winner.configure(background='black')
 
                 Winner.grab_set()
 
-                Announcement = tk.Label(Winner, text=f"{p1} Won! {p2} Lost~~~", bg='black', fg='white', font=('System', 20))
+                Announcement = tk.Label(Winner, text=f"{p1} Won! {p2} Lost~~~", bg='black', fg='white',
+                                        font=('System', 20))
                 Announcement.pack(fill=tk.BOTH)
                 play = tk.Button(Winner, text='Play again', bg='black', fg='white',
                                  font=('System', 20),
@@ -405,6 +421,7 @@ class DiceThrower:
                 Quit = tk.Button(Winner, text="Quit", bg='black', fg='white',
                                  font=('System', 20), command=lambda: [Winner.destroy(), self.game_screen.destroy()])
                 Quit.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
+                self.commit_winner(p1)
             elif self.Score[p1][1] < self.Score[p2][1]:
                 Winner = tk.Toplevel()
                 Winner.resizable(False, False)
@@ -422,6 +439,7 @@ class DiceThrower:
                 Quit = tk.Button(Winner, text="Quit", bg='black', fg='white',
                                  font=('System', 20), command=lambda: [Winner.destroy(), self.game_screen.destroy()])
                 Quit.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
+                self.commit_winner(p2)
             elif self.Score[p1][1] == self.Score[p2][1]:
                 Winner = tk.Toplevel()
                 Winner.resizable(False, False)
@@ -433,9 +451,51 @@ class DiceThrower:
                                         font=('System', 20))
                 Announcement.pack(fill=tk.BOTH)
                 play = tk.Button(Winner, text='Play again', bg='black', fg='white',
-                                 font=('System', 20), command= lambda: [Winner.destroy(),self.game_screen.destroy(), self.login()])
+                                 font=('System', 20),
+                                 command=lambda: [Winner.destroy(), self.game_screen.destroy(), self.login()])
                 play.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
                 Quit = tk.Button(Winner, text="Quit", bg='black', fg='white',
-                                 font=('System', 20), command= lambda: [Winner.destroy(), self.game_screen.destroy()])
+                                 font=('System', 20), command=lambda: [Winner.destroy(), self.game_screen.destroy()])
                 Quit.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
+
+    def commit_winner(self, player):
+        self.leadercursor.execute(f"INSERT INTO leaderboard VALUES ('{player}', {self.Score[player][1]})")
+        self.leaderboard.commit()
+
+    def board(self):
+        ranking = self.leadercursor.execute("SELECT * FROM leaderboard ORDER BY score DESC LIMIT 5 ").fetchall()
+
+        # Creating Frame for simple player data (Name, registered)
+        player = tk.Toplevel()
+        player.attributes('-fullscreen', True)
+        player.title('Players')
+        player.configure(background='black')
+        # Focus attention on Player Screen, so no spamming can occur
+        player.grab_set()
+        # Styling to make data easier to see
+        style = ttk.Style()
+
+        style.configure('Treeview.Heading', font=('Courier', 20, 'bold', 'italic'))
+        style.configure('Treeview', font=('Courier', 15))
+
+        # Button to destroy player page
+        Quit = tk.Button(player, text='Go back', command=player.destroy)
+        Quit.configure(font=('System', 50), borderwidth=0, background='black', foreground='white',
+                       activeforeground='white', activebackground='black')
+        Quit.place(relx=0.40, rely=0.8)
+
+        # Creating table
+        Data = ttk.Treeview(player, column=('#0', "#1"), height=5)
+        # Giving headings to each column
+        Data.heading('#0', text='Rank')
+        Data.heading('#1', text='Name')
+        Data.heading('#2', text='Score')
+        # Position of the Table
+        Data.place(relx=0.32, rely=0.3)
+        Rank = 1
+        for x in ranking:
+            Data.insert('', str(Rank), text=str(Rank), values=(x[0], x[1]))
+            Rank += 1
+
+
 Application = DiceThrower()
