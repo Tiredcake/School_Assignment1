@@ -310,6 +310,24 @@ class DiceThrower:
 
                 self.logging.destroy()
                 self.game(u1, u2)
+            elif u1_pass == "" and u2_pass == "":
+                Error = tk.Toplevel()
+                Error.grab_set()
+                tk.Label(Error, text=f"{u1} and {u2} does not have a password!", fg='white', bg='black',
+                         font=('Arial', 30)).pack(fill=tk.BOTH)
+                Error.after(2000, lambda: Error.destroy())
+            elif u1_pass == "":
+                Error = tk.Toplevel()
+                Error.grab_set()
+                tk.Label(Error, text=f"{u1} does not have a password!", fg='white', bg='black',
+                         font=('Arial', 30)).pack(fill=tk.BOTH)
+                Error.after(2000, lambda: Error.destroy())
+            elif u2_pass == "":
+                Error = tk.Toplevel()
+                Error.grab_set()
+                tk.Label(Error, text=f"{u2} does not have a password!", fg='white', bg='black',
+                         font=('Arial', 30)).pack(fill=tk.BOTH)
+                Error.after(2000, lambda: Error.destroy())
             else:
                 Error = tk.Toplevel()
                 Error.grab_set()
@@ -416,7 +434,7 @@ class DiceThrower:
                 Announcement.pack(fill=tk.BOTH)
                 play = tk.Button(Winner, text='Play again', bg='black', fg='white',
                                  font=('System', 20),
-                                 command=lambda: [Winner.destroy(), self.game_screen.destroy(), self.login()])
+                                 command=lambda: [Winner.destroy(), self.emergency(p1,p2)])
                 play.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
                 Quit = tk.Button(Winner, text="Quit", bg='black', fg='white',
                                  font=('System', 20), command=lambda: [Winner.destroy(), self.game_screen.destroy()])
@@ -434,7 +452,7 @@ class DiceThrower:
                 Announcement.pack(fill=tk.BOTH)
                 play = tk.Button(Winner, text='Play again', bg='black', fg='white',
                                  font=('System', 20),
-                                 command=lambda: [Winner.destroy(), self.game_screen.destroy(), self.login()])
+                                 command=lambda: [Winner.destroy(), self.emergency(p1,p2)])
                 play.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
                 Quit = tk.Button(Winner, text="Quit", bg='black', fg='white',
                                  font=('System', 20), command=lambda: [Winner.destroy(), self.game_screen.destroy()])
@@ -452,10 +470,10 @@ class DiceThrower:
                 Announcement.pack(fill=tk.BOTH)
                 play = tk.Button(Winner, text='Play again', bg='black', fg='white',
                                  font=('System', 20),
-                                 command=lambda: [Winner.destroy(), self.game_screen.destroy(), self.login()])
+                                 command=lambda: [Winner.destroy(), self.emergency()])
                 play.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
                 Quit = tk.Button(Winner, text="Quit", bg='black', fg='white',
-                                 font=('System', 20), command=lambda: [Winner.destroy(), self.game_screen.destroy()])
+                                 font=('System', 20), command=lambda: [Winner.destroy(), self.game_screen.destroy(p1,p2)])
                 Quit.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
 
     def commit_winner(self, player):
@@ -497,5 +515,17 @@ class DiceThrower:
             Data.insert('', str(Rank), text=str(Rank), values=(x[0], x[1]))
             Rank += 1
 
-
+    def emergency(self,p1,p2):
+        Assurance = tk.Toplevel()
+        Assurance.grab_set()
+        Assurance.resizable(False,False)
+        Assurance.configure(background='black')
+        Question = tk.Label(Assurance, text="Does both player want to continue playing?", font=("System", 30), bg='black', fg='white')
+        Question.pack()
+        Yes = tk.Button(Assurance, text="YES", font=("System", 30), borderwidth=0, background='black', foreground='white',
+                       activeforeground='white', activebackground='black', command=lambda:[Assurance.destroy(), self.game_screen.destroy(), self.game(p1,p2)])
+        Yes.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
+        No = tk.Button(Assurance, text="NO", font=("System", 30), borderwidth=0, background='black', foreground='white',
+                       activeforeground='white', activebackground='black', command=lambda:[Assurance.destroy(), self.game_screen.destroy()])
+        No.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
 Application = DiceThrower()
