@@ -2,18 +2,16 @@ from tkinter import *
 from PIL import ImageTk,Image
 import random as rand
 import time
-root = Tk()
-Frame = Frame(root)
-Frame.pack()
-img = [ImageTk.PhotoImage(Image.open("1.png")),ImageTk.PhotoImage(Image.open("2.png")),ImageTk.PhotoImage(Image.open("3.png")), ImageTk.PhotoImage(Image.open("4.png")), ImageTk.PhotoImage(Image.open("5.png")), ImageTk.PhotoImage(Image.open("6.png"))]
-On = True
-Count = 0
-Label(Frame, image=img[rand.randrange(0,len(img))]).pack()
+dictionary = {'player1':0, 'player2':0}
+a = dictionary.keys['player1']
+b = dictionary.keys['player2']
+print(type(a))
+print(type(b))
+
+if a == 1 and b == 1:
+    print("True")
 
 
-
-
-root.mainloop()
 """import sqlite3
 conn = sqlite3.connect('Database.db')
 # Importing data from text
