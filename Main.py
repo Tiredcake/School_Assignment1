@@ -291,7 +291,7 @@ class DiceThrower:
         Pop.after(2000, lambda: Pop.destroy())
 
     def authentication(self, u1, p1, u2, p2):
-        if u1 not in self.nameList or u2 not in self.nameList or p1 == '' or p2 == '':
+        if u1 not in self.nameList or u2 not in self.nameList:
             Error = tk.Toplevel()
             Error.grab_set()
             tk.Label(Error, text="Your Log In are Faulty! Correct it!", fg='white', bg='black',
@@ -306,11 +306,7 @@ class DiceThrower:
         elif u1 in self.nameList and u2 in self.nameList:
             u1_pass = self.cursor.execute(f"SELECT * FROM player WHERE name='{u1}'").fetchone()[3]
             u2_pass = self.cursor.execute(f"SELECT * FROM player WHERE name='{u2}'").fetchone()[3]
-            if u1_pass == p1 and u2_pass == p2:
-
-                self.logging.destroy()
-                self.game(u1, u2)
-            elif u1_pass == "" and u2_pass == "":
+            if u1_pass == "" and u2_pass == "":
                 Error = tk.Toplevel()
                 Error.grab_set()
                 tk.Label(Error, text=f"{u1} and {u2} does not have a password!", fg='white', bg='black',
@@ -327,6 +323,12 @@ class DiceThrower:
                 Error.grab_set()
                 tk.Label(Error, text=f"{u2} does not have a password!", fg='white', bg='black',
                          font=('Arial', 30)).pack(fill=tk.BOTH)
+                Error.after(2000, lambda: Error.destroy())
+            elif u1_pass == p1 and u2_pass == p2:
+                Error = tk.Toplevel()
+                self.logging.destroy()
+                self.game(u1, u2)
+
                 Error.after(2000, lambda: Error.destroy())
             else:
                 Error = tk.Toplevel()
